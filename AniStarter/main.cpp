@@ -23,7 +23,7 @@ class PlayMode
 {
 public:
 	PlayMode(MyD3D& d3d)
-		:mD3D(d3d), mBgnd(d3d)
+		:mD3D(d3d), mBgnd(d3d), mCoin(d3d)
 	{
 		InitScore();
 		mBgnd.SetTex(*d3d.GetCache().LoadTexture(&d3d.GetDevice(), "bgnd.dds"));
@@ -31,16 +31,30 @@ public:
 						WinUtil::Get().GetClientHeight() / mBgnd.GetTexData().dim.y));
 		mpFont = new SpriteFont(&d3d.GetDevice(), L"data/fonts/comicSansMS.spritefont");
 		assert(mpFont);
+
+		mCoin.SetTex(*d3d.GetCache().LoadTexture(&d3d.GetDevice(), "coin.dds"));
+		mCoin.SetTexRect(RECTF{ 0,0,16,16 });
+		mCoin.SetAnimRect(RECTF{ 0,0,64,64 });
+		mCoin.isAnimated = true;
+		mCoin.SetScale(Vector2(2.f, 2.f));
+
 	}
 	void Update(float dTime) {
 	}
+
+
 	void Render(float dTime, SpriteBatch& batch) {
+		int w, h;
+		WinUtil::Get().GetClientExtents(w, h); //get window size
+
 		mBgnd.Draw(batch);
+		mCoin.Animate(dTime);
+		mCoin.mPos = { w * 0.8f, h * 0.85f};
+		mCoin.Draw(batch);
 
 		stringstream ss;
 		ss << std::setfill('0') << std::setw(3) << (int)GetClock()*10;
-		int w, h;
-		WinUtil::Get().GetClientExtents(w, h);
+		
 		mpFont->DrawString(&batch, ss.str().c_str(), Vector2(w*0.86f, h*0.85f), Vector4(0,0,0,1));
 	}
 	void Release()
@@ -51,6 +65,7 @@ public:
 private:
 	MyD3D& mD3D;
 	Sprite mBgnd;
+	Sprite mCoin;
 	SpriteFont *mpFont = nullptr;
 
 	void InitScore()
@@ -80,8 +95,6 @@ private:
 	MyD3D& mD3D;
 	SpriteBatch *pSB = nullptr;
 };
-
-
 
 
 

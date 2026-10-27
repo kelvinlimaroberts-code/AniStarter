@@ -20,10 +20,16 @@ private:
 	ID3D11ShaderResourceView *mpTex;
 	MyD3D& mD3D;
 	RECTF mTexRect;
+	RECTF mAnimRect;   //the rect for all of the frames in the animation
+	RECTF mAnimFrame = { 0,0,0,0 }; //the rect fo the specific frame that is being shown
+	float mAnimationSpeed = 0.5f;
+	float mAnimationTimer = 0.f;
 	DirectX::SimpleMath::Vector2 scale;
 	const TexCache::Data *mpTexData;
 
+
 public:
+	bool isAnimated = false;
 	DirectX::SimpleMath::Vector2 mPos;
 	DirectX::SimpleMath::Vector2 mVel;
 	float depth;
@@ -51,6 +57,8 @@ public:
 	//change which part later
 	void SetTexRect(const RECTF& texRect);
 	void Scroll(float x, float y);
+	void SetAnimRect(const RECTF& animRect);
+	void Animate(float elapsed);
 
 	//getters
 	const TexCache::Data& GetTexData() const {
@@ -71,6 +79,7 @@ public:
 		assert(mpTexData);
 		return scale * mpTexData->dim;
 	}
+	void SetAnimationSpeed(float speed);
 };
 
 
